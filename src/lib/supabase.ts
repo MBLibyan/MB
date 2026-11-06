@@ -15,9 +15,15 @@ export interface SupabaseRuntimeConfig {
 let cachedClient: SupabaseClient | null = null;
 let cachedConfigSignature = "";
 
+const DEFAULT_SUPABASE_URL = "https://vamvzvopctdfqzpjusbz.supabase.co";
+const DEFAULT_SUPABASE_KEY = "sb_publishable_TwOkDEC5QB9GCcoX5k0yjQ_aR4dLxCm";
+
 export function getSupabaseConfig(): SupabaseRuntimeConfig {
   const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || "";
-  const envKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || "";
+  const envKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+    "";
   const envBucket = process.env.NEXT_PUBLIC_SUPABASE_BUCKET?.trim() || "media";
 
   if (
@@ -47,7 +53,11 @@ export function getSupabaseConfig(): SupabaseRuntimeConfig {
     }
   }
 
-  return { url: "", anonKey: "", bucket: envBucket };
+  return {
+    url: DEFAULT_SUPABASE_URL,
+    anonKey: DEFAULT_SUPABASE_KEY,
+    bucket: envBucket,
+  };
 }
 
 export function isSupabaseConfigured(): boolean {
@@ -209,9 +219,14 @@ export async function fetchMediaItems(): Promise<{
 
     if (error) {
       return {
-        items: [],
+        items: getLocalDemoItems(),
         source: "supabase",
-        error: error.message,
+        error:
+          error.message.includes("media_items") ||
+          error.message.includes("schema cache") ||
+          error.message.includes("does not exist")
+            ? "لم يتم إنشاء جدول media_items في Supabase بعد. يرجى نسخ وتشغيل كود SQL من نافذة (إرشادات Vercel & Supabase) داخل SQL Editor في Supabase."
+            : error.message,
       };
     }
 
