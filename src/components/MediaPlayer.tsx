@@ -271,6 +271,11 @@ export default function MediaPlayer({
     }
   };
 
+  const handleClosePlayer = useCallback(() => {
+    handleStop();
+    onClose();
+  }, [handleStop, onClose]);
+
   if (!activeItem) return null;
 
   const effectiveDuration = duration > 0 ? duration : activeItem.duration || 30;
@@ -279,122 +284,215 @@ export default function MediaPlayer({
       ? Math.min(100, (currentTime / effectiveDuration) * 100)
       : 0;
 
+  const showVideoStage = activeItem.media_type === "mp4" && videoExpanded;
+
   return (
     <div className="fixed bottom-0 inset-x-0 z-50 pointer-events-none">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-3 pointer-events-auto">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 pb-2.5 sm:pb-3 pointer-events-auto">
         {/* Expandable Video Theater Stage when playing MP4 */}
-        {activeItem.media_type === "mp4" && videoExpanded && (
-          <div
-            ref={videoStageRef}
-            className="mb-2 rounded-2xl overflow-hidden bg-[#090A0F] border border-cyan-500/30 shadow-2xl shadow-black/90 transition-all"
-          >
-            {/* Video Stage Top Bar */}
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#12141D]/90 border-b border-white/10">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-                  <Film className="w-3 h-3" />
-                  MP4 VIDEO
-                </span>
-                <h4 className="text-sm font-bold text-white truncate">
-                  {activeItem.title}
-                </h4>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={toggleFullscreen}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                  title="ملء الشاشة"
-                >
-                  {isFullscreen ? (
-                    <Minimize2 className="w-4 h-4" />
-                  ) : (
-                    <Maximize2 className="w-4 h-4" />
-                  )}
-                </button>
-                <button
-                  onClick={() => setVideoExpanded(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                  title="تصغير نافذة الفيديو"
-                >
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Video Container */}
-            <div
-              onClick={() => onPlayPause(!isPlaying)}
-              className="relative w-full aspect-video max-h-[52vh] bg-black flex items-center justify-center cursor-pointer overflow-hidden"
-            >
-              {/* Synchronized Studio Visualizer Canvas for Demo MP4 items */}
-              {!hasNativeVideoFrames && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <canvas
-                    ref={canvasRef}
-                    width={800}
-                    height={420}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none">
-                    <span className="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-mono mb-3">
-                      معاينة مرئية سينمائية تفاعلية • MP4 STREAM
-                    </span>
-                    <h3 className="text-lg sm:text-2xl font-bold text-white max-w-xl drop-shadow">
-                      {activeItem.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 max-w-lg mt-2 line-clamp-2">
-                      {activeItem.description}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Center Play/Pause Overlay Button */}
-              {!isPlaying && (
-                <div className="absolute z-20 w-16 h-16 rounded-full bg-cyan-500/90 text-white flex items-center justify-center shadow-xl shadow-cyan-500/40 backdrop-blur-md transition-transform hover:scale-105">
-                  <Play className="w-7 h-7 fill-current ml-0.5" />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Hidden or Embedded HTML5 Media Element (Handles both MP3 and MP4 seamlessly) */}
-        <video
-          ref={mediaRef}
-          src={activeItem.file_url}
-          playsInline
-          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-          onLoadedMetadata={(e) => {
-            const el = e.currentTarget;
-            if (el.duration && Number.isFinite(el.duration)) {
-              setDuration(el.duration);
-            }
-            if (el.videoWidth > 0 && el.videoHeight > 0) {
-              setHasNativeVideoFrames(true);
-            } else {
-              setHasNativeVideoFrames(false);
-            }
-          }}
-          onEnded={() => {
-            if (!isLooping) {
-              onPlayPause(false);
-            }
-          }}
+        <div
+          ref={videoStageRef}
           className={
-            activeItem.media_type === "mp4" &&
-            videoExpanded &&
-            hasNativeVideoFrames
-              ? "w-full max-h-[50vh] bg-black rounded-t-2xl object-contain"
+            showVideoStage
+              ? "mb-2 rounded-2xl overflow-hidden bg-[#090A0F] border border-cyan-500/40 shadow-2xl shadow-black/95 transition-all"
               : "hidden"
           }
-        />
+        >
+          {/* Video Stage Top Bar with Prominent Close (X) Button */}
+          <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-[#12141D] border-b border-white/10">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
+                <Film className="w-3 h-3" />
+                MP4
+              </span>
+              <h4 className="text-xs sm:text-sm font-bold text-white truncate">
+                {activeItem.title}
+              </h4>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="p-1.5 rounded-lg bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                title="ملء الشاشة"
+              >
+                {isFullscreen ? (
+                  <Minimize2 className="w-4 h-4" />
+                ) : (
+                  <Maximize2 className="w-4 h-4" />
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setVideoExpanded(false)}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.06] text-slate-200 hover:text-white hover:bg-white/15 text-xs font-semibold transition-colors"
+                title="تصغير نافذة الفيديو"
+              >
+                <ChevronDown className="w-3.5 h-3.5" />
+                <span>تصغير</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClosePlayer}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 border border-rose-500/40 text-rose-200 hover:text-white text-xs font-bold transition-colors"
+                title="إغلاق المشغل والخروج"
+              >
+                <X className="w-4 h-4" />
+                <span>إغلاق</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Unified Video Container (Houses both native MP4 video and Demo Canvas) */}
+          <div
+            onClick={() => onPlayPause(!isPlaying)}
+            className="relative w-full h-[34vh] sm:h-[44vh] max-h-[380px] bg-black flex items-center justify-center cursor-pointer overflow-hidden"
+          >
+            {/* Actual HTML5 Video / Audio Element */}
+            <video
+              ref={mediaRef}
+              src={activeItem.file_url}
+              playsInline
+              onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+              onLoadedMetadata={(e) => {
+                const el = e.currentTarget;
+                if (el.duration && Number.isFinite(el.duration)) {
+                  setDuration(el.duration);
+                }
+                if (el.videoWidth > 0 && el.videoHeight > 0) {
+                  setHasNativeVideoFrames(true);
+                } else {
+                  setHasNativeVideoFrames(false);
+                }
+              }}
+              onEnded={() => {
+                if (!isLooping) {
+                  onPlayPause(false);
+                }
+              }}
+              className={
+                hasNativeVideoFrames
+                  ? "w-full h-full object-contain bg-black"
+                  : "hidden"
+              }
+            />
+
+            {/* Synchronized Studio Visualizer Canvas for Demo MP4 items */}
+            {!hasNativeVideoFrames && showVideoStage && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <canvas
+                  ref={canvasRef}
+                  width={800}
+                  height={420}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none">
+                  <span className="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[11px] font-mono mb-2">
+                    معاينة مرئية سينمائية تفاعلية • MP4 STREAM
+                  </span>
+                  <h3 className="text-base sm:text-xl font-bold text-white max-w-xl drop-shadow line-clamp-1">
+                    {activeItem.title}
+                  </h3>
+                  <p className="text-xs text-slate-300 max-w-lg mt-1 line-clamp-2">
+                    {activeItem.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Center Play/Pause Overlay Button */}
+            {!isPlaying && (
+              <div className="absolute z-20 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-cyan-500/90 text-white flex items-center justify-center shadow-xl shadow-cyan-500/40 backdrop-blur-md transition-transform hover:scale-105">
+                <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-0.5" />
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Main Glassmorphic Studio Player Deck */}
         <div className="rounded-2xl bg-[#12141D]/95 backdrop-blur-2xl border border-white/15 shadow-2xl shadow-black/90 p-3 sm:p-4">
+          {/* Top Row on Mobile & Desktop: Active Work Info + Always-Visible Close Button */}
+          <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-white/[0.07]">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <div
+                className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+                  activeItem.media_type === "mp4"
+                    ? "bg-cyan-500/15 border-cyan-500/35 text-cyan-300"
+                    : "bg-violet-500/15 border-violet-500/35 text-violet-300"
+                }`}
+              >
+                {activeItem.media_type === "mp4" ? (
+                  <Film className="w-4 h-4 sm:w-5 sm:h-5" />
+                ) : (
+                  <Music className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+                {isPlaying && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded font-semibold shrink-0 ${
+                      activeItem.media_type === "mp4"
+                        ? "bg-cyan-500/20 text-cyan-300"
+                        : "bg-violet-500/20 text-violet-300"
+                    }`}
+                  >
+                    {activeItem.media_type.toUpperCase()}
+                  </span>
+                  <h4 className="text-xs sm:text-sm font-bold text-white truncate">
+                    {activeItem.title}
+                  </h4>
+                </div>
+                <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                  {activeItem.description || "عمل فني من المعرض الشخصي"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Toggle Video Theater if MP4 */}
+              {activeItem.media_type === "mp4" && (
+                <button
+                  type="button"
+                  onClick={() => setVideoExpanded(!videoExpanded)}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-colors"
+                >
+                  {videoExpanded ? (
+                    <>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                      <span>إخفاء الفيديو</span>
+                    </>
+                  ) : (
+                    <>
+                      <ChevronUp className="w-3.5 h-3.5" />
+                      <span>عرض الفيديو</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Always-Visible Prominent Close Button */}
+              <button
+                type="button"
+                onClick={handleClosePlayer}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/35 text-rose-300 hover:text-white text-xs font-bold transition-colors"
+                title="إغلاق المشغل"
+              >
+                <X className="w-4 h-4" />
+                <span>إغلاق</span>
+              </button>
+            </div>
+          </div>
+
           {/* Interactive Timeline Scrubber */}
-          <div className="flex items-center gap-3 mb-3" dir="ltr">
-            <span className="text-xs font-mono tabular-nums text-slate-300 w-12 text-right">
+          <div className="flex items-center gap-2.5 mb-2.5" dir="ltr">
+            <span className="text-[11px] sm:text-xs font-mono tabular-nums text-slate-300 w-11 text-right">
               {formatDuration(currentTime)}
             </span>
 
@@ -421,60 +519,21 @@ export default function MediaPlayer({
               />
             </div>
 
-            <span className="text-xs font-mono tabular-nums text-slate-400 w-12">
+            <span className="text-[11px] sm:text-xs font-mono tabular-nums text-slate-400 w-11">
               {formatDuration(effectiveDuration)}
             </span>
           </div>
 
           {/* Controls Row */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {/* Right Side (RTL): Active Work Info */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div
-                className={`relative w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${
-                  activeItem.media_type === "mp4"
-                    ? "bg-cyan-500/15 border-cyan-500/35 text-cyan-300"
-                    : "bg-violet-500/15 border-violet-500/35 text-violet-300"
-                }`}
-              >
-                {activeItem.media_type === "mp4" ? (
-                  <Film className="w-5 h-5" />
-                ) : (
-                  <Music className="w-5 h-5" />
-                )}
-                {isPlaying && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                )}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-semibold ${
-                      activeItem.media_type === "mp4"
-                        ? "bg-cyan-500/20 text-cyan-300"
-                        : "bg-violet-500/20 text-violet-300"
-                    }`}
-                  >
-                    {activeItem.media_type.toUpperCase()}
-                  </span>
-                  <h4 className="text-sm font-bold text-white truncate">
-                    {activeItem.title}
-                  </h4>
-                </div>
-                <p className="text-xs text-slate-400 truncate mt-0.5">
-                  {activeItem.description || "عمل فني من المعرض الشخصي"}
-                </p>
-              </div>
-            </div>
-
-            {/* Center: Transport Controls (Play, Pause, Stop, -10s, +10s, Prev, Next) */}
+          <div className="flex items-center justify-between gap-2">
+            {/* Transport Controls (Play, Pause, Stop, -10s, +10s, Prev, Next) */}
             <div
-              className="flex items-center gap-1.5 sm:gap-2"
+              className="flex items-center justify-center gap-1 sm:gap-2 flex-1 sm:flex-initial"
               dir="ltr"
             >
               {/* Previous Track */}
               <button
+                type="button"
                 onClick={() => handlePrevNext("prev")}
                 className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                 title="العمل السابق"
@@ -484,8 +543,9 @@ export default function MediaPlayer({
 
               {/* Rewind 10s (تأخير 10 ثوانٍ) */}
               <button
+                type="button"
                 onClick={() => handleSkipSeconds(-10)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-200 text-xs font-mono transition-colors"
+                className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-200 text-xs font-mono transition-colors"
                 title="تأخير 10 ثوانٍ"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-violet-400" />
@@ -494,8 +554,9 @@ export default function MediaPlayer({
 
               {/* Play / Pause Main Button */}
               <button
+                type="button"
                 onClick={() => onPlayPause(!isPlaying)}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-lg transition-all ${
+                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-white shadow-lg transition-all ${
                   activeItem.media_type === "mp4"
                     ? "bg-gradient-to-r from-cyan-500 to-blue-600 shadow-cyan-500/25 hover:brightness-110"
                     : "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-violet-600/25 hover:brightness-110"
@@ -511,6 +572,7 @@ export default function MediaPlayer({
 
               {/* Stop Button (إيقاف كامل) */}
               <button
+                type="button"
                 onClick={handleStop}
                 className="p-2 rounded-xl bg-white/[0.05] hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition-colors"
                 title="إيقاف وإعادة للبداية"
@@ -520,8 +582,9 @@ export default function MediaPlayer({
 
               {/* Forward 10s (تقديم 10 ثوانٍ) */}
               <button
+                type="button"
                 onClick={() => handleSkipSeconds(10)}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-200 text-xs font-mono transition-colors"
+                className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-200 text-xs font-mono transition-colors"
                 title="تقديم 10 ثوانٍ"
               >
                 <span>+10s</span>
@@ -530,6 +593,7 @@ export default function MediaPlayer({
 
               {/* Next Track */}
               <button
+                type="button"
                 onClick={() => handlePrevNext("next")}
                 className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
                 title="العمل التالي"
@@ -538,14 +602,29 @@ export default function MediaPlayer({
               </button>
             </div>
 
-            {/* Left Side (RTL): Volume Slider, Speed, Video Toggle, Close */}
+            {/* Volume Slider, Mute, Speed, Loop */}
             <div
-              className="flex items-center gap-2 sm:gap-3 justify-end flex-1"
+              className="flex items-center gap-1.5 sm:gap-2.5 justify-end"
               dir="ltr"
             >
-              {/* Volume Control */}
+              {/* Mobile Mute Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsMuted(!isMuted)}
+                className="md:hidden p-2 rounded-xl bg-white/[0.05] text-slate-300 hover:text-white border border-white/[0.06]"
+                title={isMuted ? "إلغاء كتم الصوت" : "كتم الصوت"}
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-4 h-4 text-rose-400" />
+                ) : (
+                  <Volume2 className="w-4 h-4 text-cyan-400" />
+                )}
+              </button>
+
+              {/* Desktop Volume Slider */}
               <div className="hidden md:flex items-center gap-2 bg-white/[0.04] px-3 py-1.5 rounded-xl border border-white/[0.06]">
                 <button
+                  type="button"
                   onClick={() => setIsMuted(!isMuted)}
                   className="text-slate-300 hover:text-white transition-colors"
                   title={isMuted ? "إلغاء كتم الصوت" : "كتم الصوت"}
@@ -579,6 +658,7 @@ export default function MediaPlayer({
 
               {/* Playback Speed */}
               <button
+                type="button"
                 onClick={cyclePlaybackRate}
                 className="px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-xs font-mono font-semibold text-slate-300 border border-white/[0.06] transition-colors"
                 title="سرعة التشغيل"
@@ -588,6 +668,7 @@ export default function MediaPlayer({
 
               {/* Loop Toggle */}
               <button
+                type="button"
                 onClick={() => setIsLooping(!isLooping)}
                 className={`p-2 rounded-xl border transition-colors ${
                   isLooping
@@ -597,38 +678,6 @@ export default function MediaPlayer({
                 title="تكرار التشغيل"
               >
                 <Repeat className="w-4 h-4" />
-              </button>
-
-              {/* Toggle Video Theater if MP4 */}
-              {activeItem.media_type === "mp4" && (
-                <button
-                  onClick={() => setVideoExpanded(!videoExpanded)}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-colors"
-                >
-                  {videoExpanded ? (
-                    <>
-                      <ChevronDown className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">إخفاء الفيديو</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronUp className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">عرض الفيديو</span>
-                    </>
-                  )}
-                </button>
-              )}
-
-              {/* Close Player */}
-              <button
-                onClick={() => {
-                  handleStop();
-                  onClose();
-                }}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                title="إغلاق المشغل"
-              >
-                <X className="w-4 h-4" />
               </button>
             </div>
           </div>

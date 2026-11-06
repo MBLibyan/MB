@@ -81,6 +81,7 @@ export default function AdminDashboardPage() {
     message: "",
   });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadAbortRef = useRef<AbortController | null>(null);
 
   // Edit Modal State
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
@@ -305,6 +306,9 @@ export default function AdminDashboardPage() {
       return;
     }
 
+    const controller = new AbortController();
+    uploadAbortRef.current = controller;
+
     try {
       setUploadState({
         phase: "uploading_storage",
@@ -317,6 +321,7 @@ export default function AdminDashboardPage() {
       const { publicUrl, storagePath } = await uploadMediaFileWithProgress({
         file: selectedFile,
         mediaType,
+        signal: controller.signal,
         onProgress: (percentage, loadedBytes, totalBytes) => {
           setUploadState({
             phase: "uploading_storage",
@@ -836,9 +841,9 @@ export default function AdminDashboardPage() {
                 {/* LIVE PROGRESS BAR (شريط التقدم الحي أثناء الرفع) */}
                 {uploadState.phase !== "idle" && (
                   <div className="p-4 rounded-xl bg-[#090A0F] border border-white/10 space-y-2.5">
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between gap-2 text-xs">
                       <span
-                        className={`font-semibold flex items-center gap-1.5 ${
+                        className={`font-semibold flex items-center gap-1.5 min-w-0 ${
                           uploadState.phase === "error"
                             ? "text-rose-400"
                             : uploadState.phase === "completed"
@@ -848,16 +853,46 @@ export default function AdminDashboardPage() {
                       >
                         {(uploadState.phase === "uploading_storage" ||
                           uploadState.phase === "saving_database") && (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                         )}
                         {uploadState.phase === "completed" && (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                         )}
-                        {uploadState.message}
+                        <span className="truncate">{uploadState.message}</span>
                       </span>
-                      <span className="font-mono font-bold tabular-nums text-white">
-                        {uploadState.percentage}%
-                      </span>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-mono font-bold tabular-nums text-white">
+                          {uploadState.percentage}%
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (
+                              uploadState.phase === "uploading_storage" ||
+                              uploadState.phase === "saving_database"
+                            ) {
+                              uploadAbortRef.current?.abort();
+                            }
+                            setUploadState({
+                              phase: "idle",
+                              percentage: 0,
+                              loadedBytes: 0,
+                              totalBytes: 0,
+                              message: "",
+                            });
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 border border-rose-500/35 text-rose-200 text-[11px] font-bold transition-colors"
+                          title="إغلاق أو إلغاء"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span>
+                            {uploadState.phase === "uploading_storage"
+                              ? "إلغاء"
+                              : "إغلاق"}
+                          </span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Progress Track */}
