@@ -583,36 +583,6 @@ export default function AdminDashboardPage() {
                 )}
               </button>
             </form>
-
-            {/* Demo Mode Quick Access & Supabase Setup Helper */}
-            <div className="mt-6 pt-5 border-t border-white/10 space-y-3">
-              {!isSupabaseLive && (
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 space-y-2.5">
-                  <div className="flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>
-                      لم يتم ربط مفاتيح Supabase بعد. يمكنك تجربة لوحة التحكم بالكامل الآن في وضع المعاينة أو ربط مفاتيحك مباشرة:
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleDemoQuickLogin}
-                    className="w-full py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 font-bold transition-colors"
-                  >
-                    دخول فوري لتجربة لوحة التحكم (وضع المعاينة)
-                  </button>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setSetupModalOpen(true)}
-                className="w-full py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 flex items-center justify-center gap-2 transition-colors"
-              >
-                <Database className="w-4 h-4 text-cyan-400" />
-                <span>إعداد مفاتيح Supabase و Vercel وكود SQL</span>
-              </button>
-            </div>
           </div>
         </div>
       ) : (
@@ -631,14 +601,8 @@ export default function AdminDashboardPage() {
                   <h1 className="text-lg sm:text-xl font-extrabold text-white">
                     لوحة تحكم وإدارة الأعمال
                   </h1>
-                  <span
-                    className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${
-                      isSupabaseLive
-                        ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
-                        : "bg-amber-500/15 border-amber-500/30 text-amber-300"
-                    }`}
-                  >
-                    {isSupabaseLive ? "Supabase Storage & DB" : "وضع المعاينة"}
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold border bg-emerald-500/15 border-emerald-500/30 text-emerald-300">
+                    متصل بـ Supabase
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5 font-mono">
@@ -648,14 +612,6 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <button
-                onClick={() => setSetupModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-semibold text-slate-300 transition-colors"
-              >
-                <Database className="w-3.5 h-3.5 text-cyan-400" />
-                <span>إعدادات الربط والـ SQL</span>
-              </button>
-
               <button
                 onClick={handleLogout}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 text-xs font-semibold text-rose-300 transition-colors"
