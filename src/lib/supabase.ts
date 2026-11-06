@@ -264,8 +264,9 @@ export async function uploadMediaFileWithProgress(params: {
   file: File;
   mediaType: MediaType;
   onProgress: (percentage: number, loadedBytes: number, totalBytes: number) => void;
+  signal?: AbortSignal;
 }): Promise<{ publicUrl: string; storagePath: string }> {
-  const { file, mediaType, onProgress } = params;
+  const { file, mediaType, onProgress, signal } = params;
   const supabase = getSupabaseClient();
   const config = getSupabaseConfig();
 
@@ -296,6 +297,16 @@ export async function uploadMediaFileWithProgress(params: {
 
     await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
+      if (signal) {
+        if (signal.aborted) {
+          reject(new Error("تم إلغاء عملية الرفع."));
+          return;
+        }
+        signal.addEventListener("abort", () => {
+          xhr.abort();
+          reject(new Error("تم إلغاء عملية الرفع."));
+        });
+      }
       xhr.open("POST", uploadEndpoint, true);
       xhr.setRequestHeader("Authorization", `Bearer ${authToken}`);
       xhr.setRequestHeader("apikey", config.anonKey);
@@ -328,6 +339,10 @@ export async function uploadMediaFileWithProgress(params: {
           }
           reject(new Error(errMsg));
         }
+      };
+
+      xhr.onabort = () => {
+        reject(new Error("تم إلغاء عملية الرفع."));
       };
 
       xhr.onerror = () => {
