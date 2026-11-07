@@ -505,19 +505,18 @@ export default function AdminDashboardPage() {
            UNAUTHENTICATED VIEW: SUPABASE AUTH ADMIN LOGIN GATE
            ==================================================================== */
         <div className="flex-1 flex items-center justify-center px-4 py-12 relative overflow-hidden">
-          <div className="pointer-events-none absolute top-1/4 right-1/3 w-96 h-96 rounded-full bg-violet-600/10 blur-[130px]" />
-          <div className="pointer-events-none absolute bottom-1/4 left-1/3 w-96 h-96 rounded-full bg-cyan-500/10 blur-[130px]" />
+          <div className="pointer-events-none absolute top-1/4 right-1/3 w-96 h-96 rounded-full bg-[#C6A664]/10 blur-[130px]" />
 
-          <div className="w-full max-w-md rounded-3xl bg-[#12141D] border border-white/10 shadow-2xl p-6 sm:p-8 relative z-10">
+          <div className="w-full max-w-md rounded-3xl bg-[#14171E] border border-[#C6A664]/45 shadow-2xl p-6 sm:p-8 relative z-10 gold-border-glow">
             <div className="flex flex-col items-center text-center mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600/25 to-cyan-500/25 border border-violet-500/40 flex items-center justify-center text-violet-300 mb-4 shadow-lg shadow-violet-600/15">
+              <div className="w-14 h-14 rounded-2xl bg-[#26221B] border border-[#C6A664]/60 flex items-center justify-center text-[#E5C883] mb-4 shadow-lg">
                 <Lock className="w-6 h-6" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-white">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#F5EFE0]">
                 تسجيل دخول المسؤول
               </h1>
               <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-                لوحة التحكم المحمية لإدارة ورفع ملفات الصوت (MP3) والفيديو (MP4) عبر Supabase Auth
+                لوحة التحكم المحمية لإدارة ورفع ملفات الصوت (MP3) والفيديو (MP4)
               </p>
             </div>
 
@@ -530,11 +529,11 @@ export default function AdminDashboardPage() {
 
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-[#D8C292] mb-1.5">
                   البريد الإلكتروني للأدمن
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-[#C6A664] absolute right-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     dir="ltr"
@@ -542,17 +541,17 @@ export default function AdminDashboardPage() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="admin@yourdomain.com"
-                    className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-[#090A0F] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors"
+                    className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-[#0B0D11] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#C6A664] transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-[#D8C292] mb-1.5">
                   كلمة المرور
                 </label>
                 <div className="relative">
-                  <KeyRound className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2" />
+                  <KeyRound className="w-4 h-4 text-[#C6A664] absolute right-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="password"
                     dir="ltr"
@@ -560,7 +559,7 @@ export default function AdminDashboardPage() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-[#090A0F] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors"
+                    className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-[#0B0D11] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#C6A664] transition-colors"
                   />
                 </div>
               </div>
@@ -568,7 +567,7 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={authLoading}
-                className="w-full py-3 rounded-xl bg-gradient-to-l from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 text-white text-sm font-bold shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3 rounded-xl bg-gradient-to-b from-[#E7C986] to-[#A68546] hover:brightness-105 disabled:opacity-50 text-[#0E1014] text-sm font-extrabold shadow-lg flex items-center justify-center gap-2 transition-all"
               >
                 {authLoading ? (
                   <>

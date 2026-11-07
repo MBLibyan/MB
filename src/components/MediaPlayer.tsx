@@ -294,14 +294,14 @@ export default function MediaPlayer({
           ref={videoStageRef}
           className={
             showVideoStage
-              ? "mb-2 rounded-2xl overflow-hidden bg-[#090A0F] border border-cyan-500/40 shadow-2xl shadow-black/95 transition-all"
+              ? "mb-2 rounded-2xl overflow-hidden bg-[#0E1014] border border-[#C6A664]/55 shadow-2xl shadow-black/95 transition-all"
               : "hidden"
           }
         >
           {/* Video Stage Top Bar with Prominent Close (X) Button */}
-          <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-[#12141D] border-b border-white/10">
+          <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-[#161920] border-b border-[#C6A664]/25">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold bg-[#C6A664]/15 text-[#E5C883] border border-[#C6A664]/40 shrink-0">
                 <Film className="w-3 h-3" />
                 MP4
               </span>
@@ -314,7 +314,7 @@ export default function MediaPlayer({
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="p-1.5 rounded-lg bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-lg bg-white/[0.05] text-[#D8BC7E] hover:text-white hover:bg-white/10 transition-colors"
                 title="ملء الشاشة"
               >
                 {isFullscreen ? (
@@ -390,7 +390,7 @@ export default function MediaPlayer({
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none">
-                  <span className="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[11px] font-mono mb-2">
+                  <span className="px-3 py-1 rounded-full bg-[#C6A664]/20 border border-[#C6A664]/40 text-[#E5C883] text-[11px] font-mono mb-2">
                     معاينة مرئية سينمائية تفاعلية • MP4 STREAM
                   </span>
                   <h3 className="text-base sm:text-xl font-bold text-white max-w-xl drop-shadow line-clamp-1">
@@ -405,7 +405,7 @@ export default function MediaPlayer({
 
             {/* Center Play/Pause Overlay Button */}
             {!isPlaying && (
-              <div className="absolute z-20 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-cyan-500/90 text-white flex items-center justify-center shadow-xl shadow-cyan-500/40 backdrop-blur-md transition-transform hover:scale-105">
+              <div className="absolute z-20 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#E7C986] to-[#A68546] text-[#0E1014] flex items-center justify-center shadow-xl backdrop-blur-md transition-transform hover:scale-105">
                 <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-0.5" />
               </div>
             )}
@@ -413,36 +413,24 @@ export default function MediaPlayer({
         </div>
 
         {/* Main Glassmorphic Studio Player Deck */}
-        <div className="rounded-2xl bg-[#12141D]/95 backdrop-blur-2xl border border-white/15 shadow-2xl shadow-black/90 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[#14171E]/95 backdrop-blur-2xl border border-[#C6A664]/45 shadow-2xl shadow-black/95 p-3 sm:p-4">
           {/* Top Row on Mobile & Desktop: Active Work Info + Always-Visible Close Button */}
-          <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-white/[0.07]">
+          <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-white/[0.08]">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div
-                className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border ${
-                  activeItem.media_type === "mp4"
-                    ? "bg-cyan-500/15 border-cyan-500/35 text-cyan-300"
-                    : "bg-violet-500/15 border-violet-500/35 text-violet-300"
-                }`}
-              >
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border bg-[#C6A664]/15 border-[#C6A664]/45 text-[#E5C883]">
                 {activeItem.media_type === "mp4" ? (
                   <Film className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
                   <Music className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
                 {isPlaying && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#E5C883] animate-ping" />
                 )}
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded font-semibold shrink-0 ${
-                      activeItem.media_type === "mp4"
-                        ? "bg-cyan-500/20 text-cyan-300"
-                        : "bg-violet-500/20 text-violet-300"
-                    }`}
-                  >
+                  <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded font-semibold shrink-0 bg-[#C6A664]/20 text-[#E5C883]">
                     {activeItem.media_type.toUpperCase()}
                   </span>
                   <h4 className="text-xs sm:text-sm font-bold text-white truncate">
@@ -461,7 +449,7 @@ export default function MediaPlayer({
                 <button
                   type="button"
                   onClick={() => setVideoExpanded(!videoExpanded)}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#C6A664]/15 hover:bg-[#C6A664]/25 border border-[#C6A664]/40 text-[#E5C883] text-xs font-semibold transition-colors"
                 >
                   {videoExpanded ? (
                     <>
@@ -492,18 +480,14 @@ export default function MediaPlayer({
 
           {/* Interactive Timeline Scrubber */}
           <div className="flex items-center gap-2.5 mb-2.5" dir="ltr">
-            <span className="text-[11px] sm:text-xs font-mono tabular-nums text-slate-300 w-11 text-right">
+            <span className="text-[11px] sm:text-xs font-mono tabular-nums text-[#E5C883] w-11 text-right">
               {formatDuration(currentTime)}
             </span>
 
             <div className="relative flex-1 flex items-center group">
               <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-75 ${
-                    activeItem.media_type === "mp4"
-                      ? "bg-gradient-to-r from-cyan-500 to-violet-500"
-                      : "bg-gradient-to-r from-violet-500 to-cyan-400"
-                  }`}
+                  className="h-full transition-all duration-75 bg-gradient-to-r from-[#9B7B3E] via-[#C6A664] to-[#E7C986]"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -535,7 +519,7 @@ export default function MediaPlayer({
               <button
                 type="button"
                 onClick={() => handlePrevNext("prev")}
-                className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-xl text-slate-300 hover:text-[#E5C883] hover:bg-white/10 transition-colors"
                 title="العمل السابق"
               >
                 <SkipBack className="w-4 h-4" />
@@ -548,7 +532,7 @@ export default function MediaPlayer({
                 className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-200 text-xs font-mono transition-colors"
                 title="تأخير 10 ثوانٍ"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-violet-400" />
+                <RotateCcw className="w-3.5 h-3.5 text-[#D8BC7E]" />
                 <span>-10s</span>
               </button>
 
@@ -556,11 +540,7 @@ export default function MediaPlayer({
               <button
                 type="button"
                 onClick={() => onPlayPause(!isPlaying)}
-                className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-white shadow-lg transition-all ${
-                  activeItem.media_type === "mp4"
-                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 shadow-cyan-500/25 hover:brightness-110"
-                    : "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-violet-600/25 hover:brightness-110"
-                }`}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center bg-gradient-to-b from-[#E7C986] to-[#A68546] text-[#0E1014] shadow-lg shadow-[#C6A664]/20 hover:brightness-110 transition-all"
                 title={isPlaying ? "إيقاف مؤقت" : "تشغيل"}
               >
                 {isPlaying ? (
@@ -588,14 +568,14 @@ export default function MediaPlayer({
                 title="تقديم 10 ثوانٍ"
               >
                 <span>+10s</span>
-                <RotateCw className="w-3.5 h-3.5 text-cyan-400" />
+                <RotateCw className="w-3.5 h-3.5 text-[#D8BC7E]" />
               </button>
 
               {/* Next Track */}
               <button
                 type="button"
                 onClick={() => handlePrevNext("next")}
-                className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-xl text-slate-300 hover:text-[#E5C883] hover:bg-white/10 transition-colors"
                 title="العمل التالي"
               >
                 <SkipForward className="w-4 h-4" />
