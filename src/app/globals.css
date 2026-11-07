@@ -10,28 +10,40 @@
 
 html,
 body {
-  background-color: #090A0F;
-  color: #F8FAFC;
+  background-color: #0E1014;
+  color: #F5F2EB;
   font-family: var(--font-cairo);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Dark Studio Scrollbar */
+/* Luxury Gold Gradient Utilities */
+.gold-text-gradient {
+  background: linear-gradient(180deg, #E7C986 0%, #C6A664 55%, #9B7B3E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-glow {
+  box-shadow: 0 0 22px -4px rgba(198, 166, 100, 0.28), inset 0 1px 0 0 rgba(231, 201, 134, 0.25);
+}
+
+/* Custom Dark Gold Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090A0F;
+  background: #0E1014;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #24283B;
+  background: #332C20;
   border-radius: 9999px;
+  border: 1px solid rgba(198, 166, 100, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3B4261;
+  background: #C6A664;
 }
